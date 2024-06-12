@@ -1,4 +1,4 @@
-package ru.nsu.ccfit.uryadova.minesweeper.model;
+package ru.nsu.ccfit.uryadova.minesweeper.gui.view;
 
 public enum Box {
     ZERO,
@@ -18,7 +18,7 @@ public enum Box {
     NOBOMB;
     public Object image;
 
-    Box getNextNumber(){
+    public Box getNextNumber(){
         return Box.values()[this.ordinal() + 1];
     }
 }

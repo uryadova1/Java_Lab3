@@ -1,5 +1,7 @@
 package ru.nsu.ccfit.uryadova.minesweeper.model;
 
+import ru.nsu.ccfit.uryadova.minesweeper.gui.view.Box;
+
 public class Bomb {
 
     private Matrix bombMap;

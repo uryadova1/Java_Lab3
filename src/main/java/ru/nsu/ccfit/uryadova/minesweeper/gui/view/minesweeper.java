@@ -4,17 +4,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Objects;
 
-import ru.nsu.ccfit.uryadova.minesweeper.gui.controller.Game;
-import ru.nsu.ccfit.uryadova.minesweeper.model.Box;
-import ru.nsu.ccfit.uryadova.minesweeper.model.Coord;
-import ru.nsu.ccfit.uryadova.minesweeper.model.GameState;
+import ru.nsu.ccfit.uryadova.minesweeper.gui.controller.Controller;
 import ru.nsu.ccfit.uryadova.minesweeper.model.Ranges;
 
 import javax.swing.*;
 
 public class minesweeper extends JFrame {
 
-    private Game game;
+    private Controller controller;
 
     private int COLS = 9;
     private int newBombsCnt;
@@ -23,63 +20,63 @@ public class minesweeper extends JFrame {
     private int BOMBS = 10;
     private final int IMAGE_SIZE = 50;
 
-    private JPanel panel;
+    private MinesweeperPanel panel;
 
 
     public static void main(String[] args) {
         new minesweeper();
     }
-    public void newGame(int rows, int cols, int bombs){
-        game = new Game(rows, cols, bombs);
-        System.out.println(COLS);
-        System.out.println(BOMBS);
-        game.start();
+
+    public void newGame(int rows, int cols, int bombs) {
+        controller = new Controller(rows, cols, bombs);
+        controller.start();
         initMenu();
         setImages();
-        initPanel();
-        initFrame();
+        panel = null;
+        panel = new MinesweeperPanel(controller);
+        initFrame(panel);
     }
 
     public minesweeper() {
-        game = new Game(COLS, ROWS, BOMBS);
-        System.out.println(COLS);
-        System.out.println(BOMBS);
-        game.start();
+        controller = new Controller(COLS, ROWS, BOMBS);
+        controller.start();
         initMenu();
         setImages();
-        initPanel();
-        initFrame();
+        panel = new MinesweeperPanel(controller);
+        initFrame(panel);
     }
 
-    private void initPanel() {
-        panel = new JPanel() {
-            @Override // анонимный класс это называется
-            public void paintComponent(Graphics g) {
-                super.paintComponents(g);
-                for (Coord coord : Ranges.getAllCoords()) {
-                    g.drawImage((Image) game.getBox(coord).image, coord.x * IMAGE_SIZE, coord.y * IMAGE_SIZE, this);
-                }
-            }
-        };
-        panel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int x = e.getX() / IMAGE_SIZE;
-                int y = e.getY() / IMAGE_SIZE;
-                Coord coord = new Coord(x, y);
-                if (e.getButton() == MouseEvent.BUTTON1) //left
-                    game.pressLeftButton(coord);
-                if (e.getButton() == MouseEvent.BUTTON3)
-                    game.pressRightButton(coord);
-                panel.repaint();
-            }
-        });
-        panel.setPreferredSize(new Dimension(Ranges.getSize().x * IMAGE_SIZE, Ranges.getSize().y * IMAGE_SIZE));
+//    private void initPanel() {
+//        panel = new JPanel() {
+//            @Override // анонимный класс это называется
+//            public void paintComponent(Graphics g) {
+//                super.paintComponents(g);
+//                for (Coord coord : Ranges.getAllCoords()) {
+//                    g.drawImage((Image) controller.getBox(coord).image, coord.x * IMAGE_SIZE, coord.y * IMAGE_SIZE, this);
+//                }
+//            }
+//        };
+//        panel.addMouseListener(new MouseAdapter() {
+//            @Override
+//            public void mousePressed(MouseEvent e) {
+//                int x = e.getX() / IMAGE_SIZE;
+//                int y = e.getY() / IMAGE_SIZE;
+//                Coord coord = new Coord(x, y);
+//                if (e.getButton() == MouseEvent.BUTTON1) //left
+//                    controller.pressLeftButton(coord);
+//                if (e.getButton() == MouseEvent.BUTTON3)
+//                    controller.pressRightButton(coord);
+//                panel.repaint();
+//            }
+//        });
+//        panel.setPreferredSize(new Dimension(Ranges.getSize().x * IMAGE_SIZE, Ranges.getSize().y * IMAGE_SIZE));
+//        add(panel);
+//    }
+
+
+    private void initFrame(MinesweeperPanel panel) {
         add(panel);
-    }
-
-
-    private void initFrame() {
+        setPreferredSize(new Dimension(panel.returnSize(), panel.returnSize()));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("mega saper");
         setLocationRelativeTo(null);
@@ -162,21 +159,20 @@ public class minesweeper extends JFrame {
 
                 pack();
                 int result = JOptionPane.showConfirmDialog(frame, settingsPanel,
-                        "Text Box and Text Area Example", JOptionPane.OK_CANCEL_OPTION,
+                        "Settings", JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE); //ok - 0, cancel - 2
                 if (result == 0) {
                     String tmp1 = bombs.getText();
                     String tmp2 = size.getText();
-                    if (!Objects.equals(tmp1, "") && !Objects.equals(tmp2, "")){
+                    if (!Objects.equals(tmp1, "") && !Objects.equals(tmp2, "")) {
                         newBombsCnt = Integer.parseInt(bombs.getText());
                         newSizeCnt = Integer.parseInt(size.getText());
-                        ROWS = (newSizeCnt <= 20)? newSizeCnt: 9;
-                        COLS = (newSizeCnt <= 20)? newSizeCnt: 9;
-                        BOMBS = (newBombsCnt <= 20)? newSizeCnt: 9;
+                        ROWS = (newSizeCnt <= 20) ? newSizeCnt : 9;
+                        COLS = (newSizeCnt <= 20) ? newSizeCnt : 9;
+                        BOMBS = (newBombsCnt <= 20) ? newSizeCnt : 9;
                         newGame(COLS, ROWS, BOMBS);
 
-                    }
-                    else
+                    } else
                         System.out.println(-1);
                 }
 

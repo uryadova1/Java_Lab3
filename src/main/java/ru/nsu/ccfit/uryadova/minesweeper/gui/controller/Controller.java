@@ -1,8 +1,9 @@
 package ru.nsu.ccfit.uryadova.minesweeper.gui.controller;
 
+import ru.nsu.ccfit.uryadova.minesweeper.gui.view.Box;
 import ru.nsu.ccfit.uryadova.minesweeper.model.*;
 
-public class Game {
+public class Controller {
     Bomb bomb;
     Flag flag;
 
@@ -12,7 +13,7 @@ public class Game {
         return gameState;
     }
 
-    public Game(int cols, int rows, int bombs) {
+    public Controller(int cols, int rows, int bombs) {
         Ranges.setSize(new Coord(cols, rows));
         bomb = new Bomb(bombs);
         flag = new Flag();
