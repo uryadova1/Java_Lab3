@@ -5,10 +5,12 @@ import ru.nsu.ccfit.uryadova.minesweeper.gui.view.Box;
 public class Flag {
     private Matrix flagMap;
     private int countOfClosedBoxes;
+    private int countOfRealBombs;
 
     public void init() {
         flagMap = new Matrix(Box.CLOSED);
         countOfClosedBoxes = Ranges.getSize().x * Ranges.getSize().y;
+        countOfRealBombs = 0;
     }
 
     public Box get(Coord coord) {
@@ -22,6 +24,9 @@ public class Flag {
 
     public void setFlagToBox(Coord coord) {
         flagMap.set(coord, Box.FLAGED);
+        if (Bomb.isBombed(coord)){
+            countOfRealBombs++;
+        }
     }
 
     public void togglFlagedToBox(Coord coord) {
@@ -39,13 +44,16 @@ public class Flag {
         flagMap.set(coord, Box.CLOSED);
     }
 
-    public int getCountOfClosedBpxes() {
+    public int getCountOfClosedBoxes() {
         return countOfClosedBoxes;
+    }
+
+    public int getCountOfRealBombs() {
+        return countOfRealBombs;
     }
 
     public void setBombedToBox(Coord coord) {
         flagMap.set(coord, Box.BOMBED);
-        System.out.println("bombed");
     }
 
     public void setOpenedtoClosedBombBox(Coord coord) {

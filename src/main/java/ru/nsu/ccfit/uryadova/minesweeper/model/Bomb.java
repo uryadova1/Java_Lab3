@@ -4,8 +4,8 @@ import ru.nsu.ccfit.uryadova.minesweeper.gui.view.Box;
 
 public class Bomb {
 
-    private Matrix bombMap;
-    private int totalBomb;
+    private static Matrix bombMap;
+    private final int totalBomb;
 
 
     public Bomb(int totalBomb) {
@@ -30,6 +30,10 @@ public class Bomb {
             cnt++;
             break;
         }
+    }
+
+    static boolean isBombed(Coord coord){
+        return bombMap.get(coord) == Box.BOMB;
     }
 
     public Box get(Coord coord) {

@@ -1,28 +1,47 @@
 package ru.nsu.ccfit.uryadova.minesweeper.gui.controller;
 
 import ru.nsu.ccfit.uryadova.minesweeper.gui.view.Box;
+import ru.nsu.ccfit.uryadova.minesweeper.gui.view.MinesweeperView;
 import ru.nsu.ccfit.uryadova.minesweeper.model.*;
+
+import java.io.IOException;
 
 public class Controller {
     Bomb bomb;
     Flag flag;
 
-    GameState gameState;
+    private final MinesweeperTimer timer;
 
-    public GameState getGameState() {
+    static GameState gameState;
+
+    public static GameState getGameState() {
         return gameState;
     }
 
     public Controller(int cols, int rows, int bombs) {
         Ranges.setSize(new Coord(cols, rows));
+        timer = new MinesweeperTimer();
         bomb = new Bomb(bombs);
         flag = new Flag();
     }
 
-    public void start() {
+    public void newGame(int cols, int rows, int bombs) {
+        Ranges.setSize(new Coord(cols, rows));
+        bomb = new Bomb(bombs);
         bomb.init();
         flag.init();
+        setGamePlayed();
+        timer.restartTime();
+        MinesweeperView.newGame();
+        MinesweeperView.update();
+    }
+
+    public void start() {
         gameState = GameState.PLAYED;
+        timer.startTimer();
+        bomb.init();
+        flag.init();
+        setGamePlayed();
     }
 
     public Box getBox(Coord coord) {
@@ -31,11 +50,12 @@ public class Controller {
         return flag.get(coord);
     }
 
-    public void pressLeftButton(Coord coord) {
+    public void pressLeftButton(Coord coord) throws IOException {
         if (gameOver()) return;
         openBox(coord);
         flag.setOpenedToBox(coord);
         checkWinner();
+        MinesweeperView.update();
     }
 
     private boolean gameOver() {
@@ -43,10 +63,13 @@ public class Controller {
     }
 
 
-    private void checkWinner() {
+    private void checkWinner() throws IOException {
         if (gameState == GameState.PLAYED)
-            if (flag.getCountOfClosedBpxes() == bomb.getTotalBombs())
-                System.out.println("u win!!!!!!!!!!!!");
+            if (flag.getCountOfRealBombs() == bomb.getTotalBombs()) {
+                MinesweeperView.showWinner();
+                RecordTable.RecordWrite(timer, this);
+                gameState = GameState.WINNER;
+            }
     }
 
     private void openBox(Coord coord) {
@@ -65,7 +88,6 @@ public class Controller {
                         return;
                     default:
                         flag.setOpenedToBox(coord);
-                        return;
                 }
         }
     }
@@ -73,8 +95,6 @@ public class Controller {
     private void openBombs(Coord bombed) {
         gameState = GameState.BOMBED;
         flag.setBombedToBox(bombed);
-        System.out.println(bombed.x);
-        System.out.println( bombed.y);
         for (Coord coord : Ranges.getAllCoords()) {
             if (bomb.get(coord) == Box.BOMB) {
                 flag.setOpenedtoClosedBombBox(coord);
@@ -83,6 +103,7 @@ public class Controller {
             }
         }
         flag.setBombedToBox(bombed);
+        MinesweeperView.showLooser();
 
     }
 
@@ -92,12 +113,19 @@ public class Controller {
             openBox(around);
     }
 
-    public void pressRightButton(Coord coord) {
+    public void pressRightButton(Coord coord) throws IOException {
         if (gameOver()) return;
         flag.togglFlagedToBox(coord);
+        checkWinner();
+        MinesweeperView.update();
     }
 
     public void setGamePlayed() {
         gameState = GameState.PLAYED;
+    }
+
+
+    public int returnBombsCnt() {
+        return bomb.getTotalBombs();
     }
 }
