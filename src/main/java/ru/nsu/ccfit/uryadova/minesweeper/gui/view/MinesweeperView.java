@@ -1,6 +1,7 @@
 package ru.nsu.ccfit.uryadova.minesweeper.gui.view;
 
 import ru.nsu.ccfit.uryadova.minesweeper.gui.controller.Controller;
+import ru.nsu.ccfit.uryadova.minesweeper.model.GameState;
 import ru.nsu.ccfit.uryadova.minesweeper.model.RecordTable;
 import ru.nsu.ccfit.uryadova.minesweeper.model.Coord;
 import ru.nsu.ccfit.uryadova.minesweeper.model.Ranges;
@@ -65,14 +66,14 @@ public class MinesweeperView extends JFrame {
                 int x = e.getX() / IMAGE_SIZE;
                 int y = e.getY() / IMAGE_SIZE;
                 Coord coord = new Coord(x, y);
-                if (e.getButton() == MouseEvent.BUTTON1) { // left
+                if (e.getButton() == MouseEvent.BUTTON1 && controller.returnGameState() == GameState.PLAYED) { // left
                     try {
                         controller.pressLeftButton(coord);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
                 }
-                if (e.getButton() == MouseEvent.BUTTON3) {
+                if (e.getButton() == MouseEvent.BUTTON3 && controller.returnGameState() == GameState.PLAYED) {
                     try {
                         controller.pressRightButton(coord);
                     } catch (IOException ex) {

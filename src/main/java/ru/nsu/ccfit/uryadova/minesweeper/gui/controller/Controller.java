@@ -44,6 +44,10 @@ public class Controller {
         setGamePlayed();
     }
 
+    public Enum<GameState> returnGameState(){
+        return gameState;
+    }
+
     public Box getBox(Coord coord) {
         if (flag.get(coord) == Box.OPENED)
             return bomb.get(coord);
